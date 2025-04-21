@@ -2,7 +2,6 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from google import genai
-import json
 from config import API_KEY
 
 client = genai.Client(api_key = API_KEY)
