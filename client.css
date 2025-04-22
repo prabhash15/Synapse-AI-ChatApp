@@ -7,6 +7,14 @@ body {
   color: white; /* White text color for readability */
 }
 
+#connected-users {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+  display: inline-block;
+  border: solid 1px white;
+}
+
 #chat-name {
   text-align: center;
   margin-bottom: 20px;

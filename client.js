@@ -5,6 +5,7 @@ let userInfo = {
 };
 
 function replyimage(message, reply_image) {
+  
   const arrayBuffer = new Uint8Array(message.data).buffer;
   const blob = new Blob([arrayBuffer], { type: message.fileType });
   const imageUrl = URL.createObjectURL(blob);
@@ -43,8 +44,14 @@ function socketConnect() {
     const data = JSON.parse(event.data);
     if (data.type === "total_users") {
       document.getElementById("number-of-users").innerHTML = `Number of users in room: ${data.number}`;
-    } 
-    else {
+    }
+    if (data.type === "joined") {
+      document.getElementById("connected-users").innerHTML = document.getElementById("connected-users").innerHTML + `<br>${data.user_name} joined the room`;
+    }
+    if (data.type === "left") {
+      document.getElementById("connected-users").innerHTML = document.getElementById("connected-users").innerHTML + `<br>${data.user_name} left the room`;
+    }
+    if (data.type === "image" || data.type === "message") {
       reply(event.data);
     }
   };
@@ -56,6 +63,7 @@ function socketConnect() {
 
 // When page loads
 window.onload = function () {
+
   const loginModal = document.getElementById('loginModal');
   loginModal.style.display = 'flex';
 
@@ -103,47 +111,47 @@ window.onload = function () {
   });
 
   // Add event listener for image upload
-  document.getElementById('image-upload').addEventListener('change', function(e) {
+  document.getElementById('image-upload').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     // Check if it's an image
     if (!file.type.match('image.*')) {
       alert('Please select an image file');
       return;
     }
-    
+
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('Image size should be less than 5MB');
       return;
     }
-    
+
     const reader = new FileReader();
-    
-    reader.onload = function(event) {
+
+    reader.onload = function (event) {
       // Get the ArrayBuffer
       const arrayBuffer = event.target.result;
-      
+
       // Create preview in chat
       const chatBox = document.getElementById("chatBox");
       const messageElement = document.createElement("li");
       messageElement.classList.add("sent");
-      
+
       // Create a temporary URL for the image preview
-      const blob = new Blob([arrayBuffer], {type: file.type});
+      const blob = new Blob([arrayBuffer], { type: file.type });
       const imageUrl = URL.createObjectURL(blob);
-      
+
       // Add image to chat
       messageElement.innerHTML = `<span style = "color:black;"> <i><strong>YOU</strong></i></span> : <div class="upload-indicator"></div>`;
       const img = document.createElement('img');
       img.src = imageUrl;
       img.className = 'image-message';
       messageElement.appendChild(img);
-      
+
       chatBox.appendChild(messageElement);
       chatBox.scrollTop = chatBox.scrollHeight;
-      
+
       // Send the image via WebSocket
       if (socket && socket.readyState === WebSocket.OPEN) {
         // Create a message object with type "image"
@@ -158,9 +166,9 @@ window.onload = function () {
 
       }
     };
-    
+
     reader.readAsArrayBuffer(file);
-    
+
     // Reset the file input
     this.value = '';
   });
@@ -196,12 +204,12 @@ function reply(message) {
   const chatBox = document.getElementById("chatBox");
   const reply_value = document.createElement("li");
   reply_value.classList.add("received");
-  
+
   if (message.type === "image") {
     // handle image
-    replyimage(message , reply_value);
+    replyimage(message, reply_value);
 
-  } 
+  }
 
   if (message.type === "message") {
     console.log(message);

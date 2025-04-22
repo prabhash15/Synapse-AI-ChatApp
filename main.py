@@ -11,7 +11,7 @@ app = FastAPI()
 total_active_connections = set()
 
 rooms = {}
-
+ws_username = {}
 
 origins = ["localhost:8000"]
 
@@ -29,7 +29,15 @@ async def get_answer(question):
     return response.text
 
 
-async def broadcast_total_users_in_room(room_number):
+async def broadcast_total_users_in_room(room_number , user_name = None , remove_user = None):
+    if user_name and not remove_user:
+        for conn in rooms[room_number]:
+            await conn.send_json({"type":"joined","user_name":user_name})
+            
+    elif remove_user and remove_user:
+        for conn in rooms[room_number]:
+            await conn.send_json({"type":"left","user_name":user_name})
+        
     for conn in rooms[room_number]:
         await conn.send_json({"type":"total_users","number":len(rooms[room_number])})
 
@@ -43,9 +51,9 @@ async def chat_endpoint(websocket: WebSocket):
     userdetails = await websocket.receive_json()
     user_name = userdetails["user_name"]
     room_id = userdetails["room"]
-
-    #clean the input
-    user_name = user_name.strip().upper()
+    
+    ws_username[websocket] = user_name
+    
 
     #check if the room number is valid
     if room_id not in rooms:
@@ -53,10 +61,16 @@ async def chat_endpoint(websocket: WebSocket):
         rooms[room_id].add(websocket)
     else:
         rooms[room_id].add(websocket)
+        
+        
 
     await asyncio.to_thread(print,f"User {user_name} joined room {room_id}")
-
-    await broadcast_total_users_in_room(room_id)
+     
+    #broadcast total users and joining and leaving users
+    await broadcast_total_users_in_room(room_id , user_name)
+    
+    #clean the input
+    user_name = user_name.strip().upper()
 
     #the total numbers of users all accross the rooms
     total_active_connections.add(websocket)
@@ -117,10 +131,10 @@ async def chat_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         await asyncio.to_thread(print,f"User {user_name} left room {room_id}")
         total_active_connections.remove(websocket)
-        for room in rooms:
-            if websocket in rooms[room]:
-                rooms[room].remove(websocket)
-                await broadcast_total_users_in_room(room)
+        for room_id in rooms:
+            if websocket in rooms[room_id]:
+                rooms[room_id].remove(websocket)
+                await broadcast_total_users_in_room(room_id , ws_username[websocket] , True )
 
 
 @app.get("/")
