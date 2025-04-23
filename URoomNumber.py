@@ -1,5 +1,5 @@
 
-def generate_unique_room_id(rooms):
+async def generate_unique_room_id(rooms):
     
     import random 
     room_id = ""  

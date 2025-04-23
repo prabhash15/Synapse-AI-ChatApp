@@ -48,19 +48,26 @@ async def chat_endpoint(websocket: WebSocket):
 
     await websocket.accept()
 
+    room_id = None
+    user_name = None
     
-    userdetails = await websocket.receive_json()
-    user_name = userdetails["user_name"]
-    room_id = userdetails["room"]
+    create_or_join = await websocket.receive_json()
+    
+    if create_or_join["type"] == "create_room":
+        room_id = await generate_unique_room_id(rooms)
+        await websocket.send_json(
+            {"type": "room_created", 
+             "room_id": room_id}
+            )
+
+    if create_or_join["type"] == "join":
+        room_id = create_or_join["room"]
+        user_name = create_or_join["user_name"]
+        
+        if room_id not in rooms:
+            asyncio.to_thread(print,f"Room {room_id} does not exist")
     
     ws_username[websocket] = user_name
-    
-    #generate a unique room id
-    unique_room_id = generate_unique_room_id(rooms)
-    
-    
-    await asyncio.to_thread(print,f"unique room id is {unique_room_id}")
-    
     
     #check if the room number is valid
     if room_id not in rooms:
@@ -75,9 +82,6 @@ async def chat_endpoint(websocket: WebSocket):
      
     #broadcast total users and joining and leaving users
     await broadcast_total_users_in_room(room_id , user_name)
-    
-    #clean the input
-    user_name = user_name.strip().upper()
 
     #the total numbers of users all accross the rooms
     total_active_connections.add(websocket)

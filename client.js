@@ -5,7 +5,6 @@ let userInfo = {
 };
 
 function replyimage(message, reply_image) {
-  
   const arrayBuffer = new Uint8Array(message.data).buffer;
   const blob = new Blob([arrayBuffer], { type: message.fileType });
   const imageUrl = URL.createObjectURL(blob);
@@ -26,18 +25,11 @@ function replyimage(message, reply_image) {
   reply_image.appendChild(link);
 }
 
-
 function socketConnect() {
   socket = new WebSocket("ws://localhost:8000/ws/chat");
 
   socket.onopen = function () {
     console.log("WebSocket connection established.");
-    // Send initial join messages as JSON
-    socket.send(JSON.stringify({
-      type: "join",
-      room: userInfo.room,
-      user_name: userInfo.user_name
-    }));
   };
 
   socket.onmessage = function (event) {
@@ -54,6 +46,10 @@ function socketConnect() {
     if (data.type === "image" || data.type === "message") {
       reply(event.data);
     }
+    if (data.type === "room_created") {
+      // Handle room creation response
+      document.getElementById("generatedRoomId").innerText = data.room_id;
+    }
   };
 
   socket.onclose = function () {
@@ -61,14 +57,91 @@ function socketConnect() {
   };
 }
 
-// When page loads
-window.onload = function () {
 
+
+// Request a room ID from server
+function requestRoomId() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+      type: "create_room"
+    }));
+  }
+}
+
+// When page loads Starting point
+window.onload = function () {
   const loginModal = document.getElementById('loginModal');
   loginModal.style.display = 'flex';
 
-  // Form submission
-  document.getElementById('loginForm').addEventListener('submit', function (e) {
+  // Show option selection by default
+  const optionSelection = document.getElementById('optionSelection');
+  const createRoomForm = document.getElementById('createRoomForm');
+  const joinRoomForm = document.getElementById('joinRoomForm');
+  
+  // Connect to socket for room ID generation
+  socketConnect();
+
+  // Button event listeners
+  document.getElementById('createRoomBtn').addEventListener('click', function() {
+    optionSelection.style.display = 'none';
+    createRoomForm.style.display = 'block';
+    
+    // Request room ID from server
+    requestRoomId();
+    
+  });
+
+  document.getElementById('joinRoomBtn').addEventListener('click', function() {
+    optionSelection.style.display = 'none';
+    joinRoomForm.style.display = 'block';
+  });
+
+  document.getElementById('backFromCreate').addEventListener('click', function() {
+    createRoomForm.style.display = 'none';
+    optionSelection.style.display = 'block';
+  });
+
+  document.getElementById('backFromJoin').addEventListener('click', function() {
+    joinRoomForm.style.display = 'none';
+    optionSelection.style.display = 'block';
+  });
+
+  // Create Room Form submission
+  document.getElementById('createRoomForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const userName = document.getElementById('createUserName').value.trim();
+    const roomId = document.getElementById('generatedRoomId').innerText.trim();
+
+    if (!userName) {
+      document.getElementById('createUserNameError').style.display = 'block';
+      return;
+    } else {
+      document.getElementById('createUserNameError').style.display = 'none';
+    }
+
+    if (roomId === "Generating room ID...") {
+      alert("Please wait for room ID generation");
+      return;
+    }
+
+    userInfo.room = roomId;
+    userInfo.user_name = userName;
+    loginModal.style.display = 'none';
+
+    console.log("User created and joined room:", userInfo.room);
+    console.log("user_name:", userInfo.user_name);
+
+    // Socket is already connected from earlier, just need to join the room
+    socket.send(JSON.stringify({
+      type: "join",
+      room: userInfo.room,
+      user_name: userInfo.user_name
+    }));
+  });
+
+  // Join Room Form submission
+  document.getElementById('joinRoomForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     const roomId = document.getElementById('roomId').value.trim();
@@ -98,7 +171,16 @@ window.onload = function () {
       console.log("User joined room:", userInfo.room);
       console.log("user_name:", userInfo.user_name);
 
-      socketConnect();
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        socketConnect();
+      } else {
+        // If socket is already open, just join the room
+        socket.send(JSON.stringify({
+          type: "join",
+          room: userInfo.room,
+          user_name: userInfo.user_name
+        }));
+      }
     }
   });
 
@@ -199,7 +281,6 @@ function sendMessage() {
 }
 
 function reply(message) {
-
   message = JSON.parse(message);
   const chatBox = document.getElementById("chatBox");
   const reply_value = document.createElement("li");
@@ -208,7 +289,6 @@ function reply(message) {
   if (message.type === "image") {
     // handle image
     replyimage(message, reply_value);
-
   }
 
   if (message.type === "message") {

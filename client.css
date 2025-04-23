@@ -252,6 +252,7 @@ button:active {
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
   width: 100%;
+  margin-bottom: 10px;
 }
 
 .btn-primary {
@@ -259,11 +260,45 @@ button:active {
   color: white;
 }
 
-.btn-primary:hover {
-  background-color: #0063b1;
+.btn-secondary {
+  background-color: #444;
+  color: white;
+}
+
+.btn-tertiary {
+  background-color: #333;
+  color: #ddd;
+}
+
+.btn:hover {
   transform: translateY(-2px);
 }
 
-.btn-primary:active {
+.btn-primary:hover {
+  background-color: #0063b1;
+}
+
+.btn-secondary:hover {
+  background-color: #555;
+}
+
+.btn-tertiary:hover {
+  background-color: #3a3a3a;
+}
+
+.btn:active {
   transform: translateY(0);
+}
+
+/* Generated Room ID display */
+.generated-room-id {
+  background-color: #333;
+  padding: 12px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #0078d7;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-align: center;
+  border: 1px dashed #444;
 }

@@ -14,9 +14,36 @@
   <div id="loginModal" class="modal-overlay">
     <div class="modal-container">
       <div class="modal-header">
-        <h2>Join Chat Room</h2>
+        <h2>Welcome to JustChat</h2>
       </div>
-      <form id="loginForm">
+      
+      <!-- Option Selection -->
+      <div id="optionSelection">
+        <div class="button-group" style="display: flex; gap: 10px;">
+          <button type="button" id="createRoomBtn" class="btn btn-primary">Create Room</button>
+          <button type="button" id="joinRoomBtn" class="btn btn-secondary">Join Room</button>
+        </div>
+      </div>
+      
+      <!-- Create Room Form -->
+      <form id="createRoomForm" style="display: none;">
+        <div class="form-group">
+          <label for="createUserName">Your Name</label>
+          <input type="text" id="createUserName" placeholder="Enter Your Name" required>
+          <div id="createUserNameError" class="error-message">User name is required</div>
+        </div>
+        <div class="form-group">
+          <label for="generatedRoomId">Room ID</label>
+          <div id="generatedRoomId" class="generated-room-id">Generating room ID...</div>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">Create & Join</button>
+          <button type="button" id="backFromCreate" class="btn btn-tertiary">Back</button>
+        </div>
+      </form>
+      
+      <!-- Join Room Form -->
+      <form id="joinRoomForm" style="display: none;">
         <div class="form-group">
           <label for="roomId">Room ID</label>
           <input type="text" id="roomId" placeholder="Enter Room ID" required>
@@ -29,6 +56,7 @@
         </div>
         <div class="button-group">
           <button type="submit" class="btn btn-primary">Join Room</button>
+          <button type="button" id="backFromJoin" class="btn btn-tertiary">Back</button>
         </div>
       </form>
     </div>
