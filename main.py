@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from google import genai
 from config import API_KEY
+from URoomNumber import generate_unique_room_id
 
 client = genai.Client(api_key = API_KEY)
 
@@ -54,7 +55,13 @@ async def chat_endpoint(websocket: WebSocket):
     
     ws_username[websocket] = user_name
     
-
+    #generate a unique room id
+    unique_room_id = generate_unique_room_id(rooms)
+    
+    
+    await asyncio.to_thread(print,f"unique room id is {unique_room_id}")
+    
+    
     #check if the room number is valid
     if room_id not in rooms:
         rooms[room_id] = set()
