@@ -157,7 +157,7 @@ async def chat_endpoint(websocket: WebSocket):
                                               "user_name":"AI",
                                               "message":f"{AI_response}"
                                               })
-            if message["type"] == "text":
+            else:
                 if websocket in rooms[room_id]:
                     for conn in rooms[room_id]:
                         if conn != websocket:
