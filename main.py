@@ -24,6 +24,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+async def valid_room(rooms , room_id):
+    if room_id in rooms:
+        return True
 
 async def get_answer(question):
     response = await asyncio.to_thread(client.models.generate_content , model="gemini-2.0-flash", contents=[question])
@@ -53,42 +56,69 @@ async def chat_endpoint(websocket: WebSocket):
     
     create_or_join = await websocket.receive_json()
     
+    
     if create_or_join["type"] == "create_room":
+        
         room_id = await generate_unique_room_id(rooms)
+        
+        #create the room id that was generated above and add the requesting websocket to the room
+        rooms[room_id] = set()
+        rooms[room_id].add(websocket)
+        
+        #send the room id to the client
         await websocket.send_json(
             {"type": "room_created", 
              "room_id": room_id}
             )
 
     if create_or_join["type"] == "join":
-        room_id = create_or_join["room"]
+        
         user_name = create_or_join["user_name"]
+        room_id = create_or_join["room"]
+        isValid= await valid_room(rooms , room_id)
         
-        if room_id not in rooms:
-            asyncio.to_thread(print,f"Room {room_id} does not exist")
-    
-    ws_username[websocket] = user_name
-    
-    #check if the room number is valid
-    if room_id not in rooms:
-        rooms[room_id] = set()
-        rooms[room_id].add(websocket)
-    else:
-        rooms[room_id].add(websocket)
+        if isValid:
+            rooms[room_id].add(websocket)
+            # add the username to the websocket:user_name dictionary
+            ws_username[websocket] = user_name  
+            await broadcast_total_users_in_room(room_id , user_name)
+            
+        else: 
+            await asyncio.to_thread(print,f"Room {room_id} does not exist")
         
+            
         
-
-    await asyncio.to_thread(print,f"User {user_name} joined room {room_id}")
+    await asyncio.to_thread(print,f"Rooms: {rooms}")
      
-    #broadcast total users and joining and leaving users
-    await broadcast_total_users_in_room(room_id , user_name)
 
     #the total numbers of users all accross the rooms
     total_active_connections.add(websocket)
 
     try:
         while True:
+            
+            #recieve any new messages from the client of any type
             message = await websocket.receive_json()
+            
+            if message["type"] == "join":
+                
+                user_name = message["user_name"]
+                room_id = message["room"] 
+                
+                #check if the room number is valid
+                
+                isValid = await valid_room(rooms , room_id)
+                
+                if not isValid:
+                    await asyncio.to_thread(print,f"Room {room_id} does not exist")
+                
+                #printing the user name and room id in the console
+                await asyncio.to_thread(print, f"User {user_name} in room {room_id} joined")
+                
+                # add the username to the websocket:user_name dictionary
+                ws_username[websocket] = user_name
+                
+                await broadcast_total_users_in_room(room_id , user_name)
             
             if message["type"] == "image":
                 await asyncio.to_thread(print, f"User {user_name} in room {room_id} sent an image")
@@ -127,7 +157,7 @@ async def chat_endpoint(websocket: WebSocket):
                                               "user_name":"AI",
                                               "message":f"{AI_response}"
                                               })
-            else:
+            if message["type"] == "text":
                 if websocket in rooms[room_id]:
                     for conn in rooms[room_id]:
                         if conn != websocket:
@@ -146,6 +176,10 @@ async def chat_endpoint(websocket: WebSocket):
             if websocket in rooms[room_id]:
                 rooms[room_id].remove(websocket)
                 await broadcast_total_users_in_room(room_id , ws_username[websocket] , True )
+                
+        if len(rooms[room_id]) == 0:
+            del rooms[room_id]
+        await asyncio.to_thread(print,f"Rooms: {rooms}")
 
 
 @app.get("/")
