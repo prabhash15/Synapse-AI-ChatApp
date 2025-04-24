@@ -7,6 +7,17 @@ from URoomNumber import generate_unique_room_id
 
 client = genai.Client(api_key = API_KEY)
 
+query = """Format the following content using ONLY the specified HTML tags and formatting rules:
+
+1. Use HTML heading tags <h1> to <h6> ONLY for headings.
+2. Wrap regular text content inside <p> tags.
+3. Use <code> ONLY for code blocks (marked by triple backticks ```).
+4. DO NOT use any other HTML tags.
+5. Where necessary, apply bold + italics + underline formatting to emphasize key text (using: bold + italics + underline at the same time).
+6. Do not include any text outside the formatted HTML output. Just return the converted HTML code only.
+
+Here is the content to format:
+"""
 
 app = FastAPI()
 total_active_connections = set()
@@ -141,7 +152,13 @@ async def chat_endpoint(websocket: WebSocket):
                             })
 
             elif (message["type"] == "text" and "@ai" in message["message"]):
-                AI_response = await get_answer(message["message"])
+                AI_response = await get_answer(message["message"] + query)
+                
+                #cleaning the response
+                AI_response = AI_response.replace("```html","")
+                AI_response = AI_response.replace("```","")
+                
+                await asyncio.to_thread(print,f"AI response: {AI_response}")
                 if websocket in rooms[room_id]:
                     for conn in rooms[room_id]:
                         if conn != websocket:
