@@ -5,5 +5,3 @@ Its a chat application that creates/joins room created by the users
 With AI integration 
 
 Created mainly for Hackathons
-
-https://github.com/prabhash15/SynapseCopy.git

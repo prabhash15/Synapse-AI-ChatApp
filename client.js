@@ -45,13 +45,26 @@ function socketConnect() {
   socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
     if (data.type === "total_users") {
-      document.getElementById("number-of-users").innerHTML = `Number of users in room: ${data.number}`;
+      document.getElementById("number-of-users").innerHTML = `Users in room: ${data.number}`;
+      document.getElementById("number-of-users").style.display = 'inline-block';
     }
     if (data.type === "joined") {
-      document.getElementById("connected-users").innerHTML = document.getElementById("connected-users").innerHTML + `<br>${data.user_name} joined the room`;
+      // Add system message to chat for user joining
+      const chatBox = document.getElementById("chatBox");
+      const joinMessage = document.createElement("li");
+      joinMessage.classList.add("system-message");
+      joinMessage.innerHTML = `<span class="user-notification">${data.user_name} joined the room</span>`;
+      chatBox.appendChild(joinMessage);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
     if (data.type === "left") {
-      document.getElementById("connected-users").innerHTML = document.getElementById("connected-users").innerHTML + `<br>${data.user_name} left the room`;
+      // Add system message to chat for user leaving
+      const chatBox = document.getElementById("chatBox");
+      const leaveMessage = document.createElement("li");
+      leaveMessage.classList.add("system-message");
+      leaveMessage.innerHTML = `<span class="user-notification">${data.user_name} left the room</span>`;
+      chatBox.appendChild(leaveMessage);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
     if (data.type === "image" || data.type === "message") {
       reply(event.data);
@@ -179,6 +192,10 @@ window.onload = function () {
     requestRoomId();
   });
 
+document.getElementById('copyRoomId').addEventListener('click', function() {
+  copyRoomIdToClipboard();
+});
+
   document.getElementById('joinRoomBtn').addEventListener('click', function() {
     optionSelection.style.display = 'none';
     joinRoomForm.style.display = 'block';
@@ -230,6 +247,10 @@ window.onload = function () {
     userInfo.user_name = userName;
     loginModal.style.display = 'none';
 
+    // Update chat name with room ID
+    document.getElementById("chat-name").innerHTML = `<h1>Room: ${userInfo.room}</h1>`;
+    document.getElementById("chat-name").style.display = 'block';
+
     console.log("User created and joined room:", userInfo.room);
     console.log("user_name:", userInfo.user_name);
 
@@ -268,6 +289,10 @@ window.onload = function () {
       userInfo.room = roomId;
       userInfo.user_name = userName;
       loginModal.style.display = 'none';
+
+      // Update chat name with room ID
+      document.getElementById("chat-name").innerHTML = `<h1>Room: ${userInfo.room}</h1>`;
+      document.getElementById("chat-name").style.display = 'block';
 
       console.log("User joined room:", userInfo.room);
       console.log("user_name:", userInfo.user_name);
@@ -373,13 +398,23 @@ function sendMessage() {
   const chatBox = document.getElementById("chatBox");
   const messageElement = document.createElement("li");
   messageElement.classList.add("sent");
-  messageElement.innerHTML = `<span style = "color:black;"><i><strong>YOU</strong></i></span> : ${message}`;
+  messageElement.innerHTML = `<span style="color:black;"><i><strong>YOU</strong></i></span> : ${message}`;
+  
+  // Add with animation
   chatBox.appendChild(messageElement);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  
+  // Smooth scroll with small delay to let animation start
+  setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 50);
 
+  // Clear input with a nice effect
   input.value = "";
+  input.focus();
 }
 
+
+// Enhanced reply function with better animation flow
 function reply(message) {
   message = JSON.parse(message);
   const chatBox = document.getElementById("chatBox");
@@ -392,11 +427,41 @@ function reply(message) {
   }
 
   if (message.type === "message") {
-    console.log(message);
     // Handle regular text message
-    reply_value.innerHTML = `<span style = "color:black;"><i><strong>${message["user_name"]}</strong></i></span> : ${message["message"]}`;
+    reply_value.innerHTML = `<span style="color:black;"><i><strong>${message["user_name"]}</strong></i></span> : ${message["message"]}`;
   }
 
+  // Add with animation
   chatBox.appendChild(reply_value);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  
+  // Ensure smooth scroll to bottom
+  setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 50);
+}
+
+// Add this function to your client.js file
+function copyRoomIdToClipboard() {
+  const roomId = document.getElementById('generatedRoomId').innerText.trim();
+  
+  if (roomId === "Generating room ID...") {
+    return; // Don't copy if the room ID isn't ready
+  }
+  
+  // Copy to clipboard
+  navigator.clipboard.writeText(roomId)
+    .then(() => {
+      // Show "Copied!" tooltip
+      const tooltip = document.getElementById('copyTooltip');
+      tooltip.classList.add('show');
+      
+      // Hide tooltip after 2 seconds
+      setTimeout(() => {
+        tooltip.classList.remove('show');
+      }, 2000);
+    })
+    .catch(err => {
+      console.error('Failed to copy: ', err);
+      alert('Failed to copy room ID');
+    });
 }
