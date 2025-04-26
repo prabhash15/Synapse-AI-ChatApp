@@ -4,6 +4,13 @@ let userInfo = {
   room: ""
 };
 
+// State to store audio and thumbnail data
+let youtubeState = {
+  audioUrl: null,
+  thumbnailUrl: null,
+  videoTitle: null
+};
+
 function base64ToBinary(base64) {
   console.log('binary length:', base64.length);
   if (base64.length < 1000) { 
@@ -96,6 +103,9 @@ function socketConnect() {
     if (data.type === "audio") {
       handleReceivedAudio(data);
     }
+    if (data.type === "thumbnail") {
+      handleReceivedThumbnail(data);
+    }
   };
 
   socket.onclose = function () {
@@ -110,22 +120,164 @@ async function handleReceivedAudio(data) {
     const uint8Array = new Uint8Array(binaryData);
     const blob = new Blob([uint8Array], { type: 'audio/mp3' });
     const audioUrl = URL.createObjectURL(blob);
-    const audioPlayer = document.getElementById('audio-player');
-    if (!audioPlayer) {
-      console.error("Audio player element not found!");
-      return;
-    }
-    audioPlayer.src = audioUrl;
-    await audioPlayer.load();
-    const audioPlayerContainer = document.getElementById('audio-player-container');
-    if (audioPlayerContainer) {
-      audioPlayerContainer.style.display = 'block';
-      const waveform = document.getElementById('waveform');
-      waveform.innerHTML = '<div></div><div></div><div></div><div></div><div></div>';
-    }
+
+    // Store audio URL
+    youtubeState.audioUrl = audioUrl;
+
+    // Update the audio section
+    updateAudioSection();
   } catch (error) {
     console.error("Failed to handle received audio:", error);
+    const loadingIndicator = document.querySelector('.youtube-loading');
+    if (loadingIndicator) {
+      loadingIndicator.textContent = 'Failed to load audio';
+    }
   }
+}
+
+function handleReceivedThumbnail(data) {
+  try {
+    // Convert thumbnail_data (list of bytes) to Blob
+    const uint8Array = new Uint8Array(data.thumbnail_data);
+    const blob = new Blob([uint8Array], { type: 'image/jpeg' }); // Assuming JPEG, adjust if needed
+    const thumbnailUrl = URL.createObjectURL(blob);
+
+    // Store thumbnail URL and title
+    youtubeState.thumbnailUrl = thumbnailUrl;
+    youtubeState.videoTitle = data.title;
+
+    // Update the audio section
+    updateAudioSection();
+  } catch (error) {
+    console.error("Failed to handle received thumbnail:", error);
+    // Fallback: hide thumbnail or show placeholder
+    youtubeState.thumbnailUrl = null;
+    updateAudioSection();
+  }
+}
+
+function updateAudioSection() {
+  // Check if at least audio is available
+  if (!youtubeState.audioUrl) return;
+
+  // Remove loading indicator
+  const loadingIndicator = document.querySelector('.youtube-loading');
+  if (loadingIndicator) {
+    loadingIndicator.remove();
+  }
+
+  // Update audio player
+  const audioPlayer = document.getElementById('audio-player');
+  if (!audioPlayer) {
+    console.error("Audio player element not found!");
+    return;
+  }
+  audioPlayer.src = youtubeState.audioUrl;
+  audioPlayer.load();
+
+  // Update thumbnail and title
+  const thumbnailImage = document.getElementById('thumbnail-image');
+  const videoTitle = document.getElementById('video-title');
+  if (youtubeState.thumbnailUrl) {
+    thumbnailImage.src = youtubeState.thumbnailUrl;
+    thumbnailImage.style.display = 'block';
+  } else {
+    thumbnailImage.style.display = 'none';
+  }
+  videoTitle.textContent = youtubeState.videoTitle || 'Unknown Title';
+
+  // Show audio player container
+  const audioPlayerContainer = document.getElementById('audio-player-container');
+  if (audioPlayerContainer) {
+    audioPlayerContainer.style.display = 'block';
+    
+    // Initialize waveform
+    const waveform = document.getElementById('waveform');
+    waveform.innerHTML = Array(10).fill().map(() => '<div></div>').join('');
+    
+    // Update waveform animation based on play state
+    audioPlayer.addEventListener('play', () => {
+      waveform.classList.add('playing');
+    });
+    audioPlayer.addEventListener('pause', () => {
+      waveform.classList.remove('playing');
+    });
+  }
+
+  // Initialize custom player controls
+  initializeAudioPlayer();
+
+  // Reset state for next audio
+  youtubeState = {
+    audioUrl: null,
+    thumbnailUrl: null,
+    videoTitle: null
+  };
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+function initializeAudioPlayer() {
+  const audio = document.getElementById('audio-player');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const playIcon = playPauseBtn.querySelector('.play-icon');
+  const pauseIcon = playPauseBtn.querySelector('.pause-icon');
+  const seekBar = document.getElementById('seek-bar');
+  const currentTime = document.getElementById('current-time');
+  const duration = document.getElementById('duration');
+  const volumeBtn = document.getElementById('volume-btn');
+  const volumeBar = document.getElementById('volume-bar');
+
+  // Update duration
+  audio.addEventListener('loadedmetadata', () => {
+    duration.textContent = formatTime(audio.duration);
+    seekBar.max = audio.duration;
+  });
+
+  // Update current time and seek bar
+  audio.addEventListener('timeupdate', () => {
+    currentTime.textContent = formatTime(audio.currentTime);
+    seekBar.value = audio.currentTime;
+  });
+
+  // Play/Pause toggle
+  playPauseBtn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+    } else {
+      audio.pause();
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+    }
+  });
+
+  // Seek
+  seekBar.addEventListener('input', () => {
+    audio.currentTime = seekBar.value;
+  });
+
+  // Volume control
+  volumeBtn.addEventListener('click', () => {
+    volumeBar.style.display = volumeBar.style.display === 'none' ? 'block' : 'none';
+  });
+
+  volumeBar.addEventListener('input', () => {
+    audio.volume = volumeBar.value / 100;
+  });
+
+  // Reset on audio end
+  audio.addEventListener('ended', () => {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+    seekBar.value = 0;
+    currentTime.textContent = '0:00';
+  });
 }
 
 function sendYoutubeLink() {
@@ -139,10 +291,19 @@ function sendYoutubeLink() {
     return;
   }
   const youtubeContainer = document.querySelector('.youtube-container');
+  
+  // Remove existing loading indicator
+  const existingLoading = document.querySelector('.youtube-loading');
+  if (existingLoading) {
+    existingLoading.remove();
+  }
+  
+  // Add new loading indicator
   const loadingIndicator = document.createElement('div');
   loadingIndicator.className = 'youtube-loading';
   loadingIndicator.textContent = 'Extracting audio from YouTube video...';
   youtubeContainer.appendChild(loadingIndicator);
+  
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({
       type: "youtube_link",

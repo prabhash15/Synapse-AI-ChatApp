@@ -97,7 +97,34 @@
           <button id="send-youtube-btn">Get Audio</button>
         </div>
         <div id="audio-player-container">
-          <audio id="audio-player" controls></audio>
+          <div class="thumbnail-container">
+            <img id="thumbnail-image" alt="Video Thumbnail" style="display: none;">
+            <div id="video-title"></div>
+          </div>
+          <div class="custom-audio-player">
+            <audio id="audio-player" preload="auto"></audio>
+            <div class="player-controls">
+              <button id="play-pause-btn" class="control-btn" title="Play/Pause">
+                <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                <svg class="pause-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+                </svg>
+              </button>
+              <span id="current-time" class="time-display">0:00</span>
+              <input type="range" id="seek-bar" min="0" max="100" value="0" class="seek-bar">
+              <span id="duration" class="time-display">0:00</span>
+              <button id="volume-btn" class="control-btn" title="Volume">
+                <svg class="volume-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                </svg>
+              </button>
+              <input type="range" id="volume-bar" min="0" max="100" value="100" class="volume-bar" style="display: none;">
+            </div>
+          </div>
           <div class="waveform" id="waveform"></div>
         </div>
       </div>
@@ -105,6 +132,6 @@
   </div>
  
   <script src="client.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9367c7c2dcb6b039',t:'MTc0NTY4ODMzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'936885318e77da9f',t:'MTc0NTY5NjA5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>

@@ -5,6 +5,7 @@ from google import genai
 from config import API_KEY
 from URoomNumber import generate_unique_room_id
 from music import download
+from thumbnail import generate_thumbnail
 
 import base64
 
@@ -43,6 +44,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 async def valid_room(rooms , room_id):
     if room_id in rooms:
         return True
@@ -137,6 +140,7 @@ async def chat_endpoint(websocket: WebSocket):
             #recieve any new messages from the client of any type
             message = await websocket.receive_json()
             
+            
             if message["type"] == "join":
                 
                 user_name = message["user_name"]
@@ -209,9 +213,23 @@ async def chat_endpoint(websocket: WebSocket):
             elif (message["type"] == "youtube_link"):
                 
                 audio = await download(message["url"])
+                thumbnail = await generate_thumbnail(message["url"])
+                
+                await websocket.send_json(
+                    {"type":"thumbnail",
+                     "thumbnail_data":list(thumbnail["data"]), 
+                     "title":thumbnail["title"],
+                     })
+                
                 base64_data = base64.b64encode(audio["data"]).decode("utf-8")
                 await asyncio.to_thread(print,f"Audio data length: {len(base64_data)}")
-                await websocket.send_json({"type":"audio","audio_data":base64_data})
+                
+                await websocket.send_json(
+                    
+                    {"type":"audio",
+                     "audio_data":base64_data
+                     })
+                
                 await asyncio.to_thread(print,f"Audio data sent")
                     
                 
