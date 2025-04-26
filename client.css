@@ -1,7 +1,6 @@
 /* General styles */
 body {
-  background: linear-gradient(135deg, #0a0a0a, #1c1c1c, #2a2a2a), url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Ccircle cx="10" cy="10" r="1" fill="rgba(170,170,170,0.1)" /%3E%3Ccircle cx="90" cy="90" r="1" fill="rgba(170,170,170,0.1)" /%3E%3Ccircle cx="50" cy="50" r="2" fill="rgba(170,170,170,0.15)" /%3E%3C/svg%3E');
-  background-size: cover, 100px;
+  background: #121212; /* Solid dark matte background */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   margin: 0;
   padding: 0;
@@ -10,9 +9,8 @@ body {
 .app-title {
   font-family: 'Orbitron', sans-serif;
   font-size: 36px;
-  color: #cccccc;
-  text-shadow: 0 0 10px rgba(170, 170, 170, 0.5);
-  letter-spacing: 4px;
+  color: #b3b3b3; /* Matte light gray */
+  letter-spacing: 2px; /* Reduced for cleaner look */
   text-align: center;
   padding: 20px 0;
   opacity: 0;
@@ -21,7 +19,7 @@ body {
 
 .app-title.visible {
   opacity: 1;
-  transform: scale(1.05);
+  transform: scale(1.02); /* Reduced scale for matte subtlety */
 }
 
 .main-container {
@@ -38,38 +36,43 @@ body {
 /* Sidebar */
 .sidebar {
   width: 250px;
-  background: linear-gradient(180deg, rgba(26, 26, 26, 0.9), rgba(40, 40, 40, 0.8));
-  backdrop-filter: blur(15px);
-  border-radius: 16px;
+  background: #1a1a1a; /* Solid matte dark */
+  border-radius: 4px; /* Sharper corners */
+  border: 1px solid #444444; /* Sharp border */
   padding: 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(170, 170, 170, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Minimal shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, z-index 0s;
+}
+
+.sidebar:hover {
+  transform: scale(1.02); /* Pop-out effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Stronger matte shadow */
+  z-index: 10; /* Appear above others */
 }
 
 #chat-name {
   text-align: center;
   margin-bottom: 20px;
-  color: #cccccc;
+  color: #b3b3b3;
   display: none;
 }
 
 #chat-name h1 {
   margin: 0;
   font-size: 24px;
-  text-shadow: 0 0 5px rgba(170, 170, 170, 0.3);
 }
 
 #number-of-users {
   text-align: center;
   margin-bottom: 15px;
   font-weight: bold;
-  color: #aaaaaa;
+  color: #999999; /* Matte medium gray */
   padding: 8px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 12px;
+  background: #2a2a2a; /* Solid matte */
+  border-radius: 4px;
   display: block;
-  text-shadow: 0 0 3px rgba(170, 170, 170, 0.3);
 }
 
 .users-list {
@@ -84,36 +87,36 @@ body {
   align-items: center;
   gap: 12px;
   padding: 10px;
-  background: rgba(170, 170, 170, 0.1);
-  border-radius: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #2a2a2a;
+  border-radius: 4px;
+  border: 1px solid #444444;
+  transition: transform 0.2s ease, background 0.2s ease;
   animation: pulseUser 0.5s ease;
 }
 
 .user-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(170, 170, 170, 0.2);
+  transform: scale(1.02);
+  background: #333333; /* Matte hover */
 }
 
 .user-avatar {
   width: 45px;
   height: 45px;
-  background: linear-gradient(45deg, #3a3a3a, #5a5a5a);
-  border-radius: 50%;
+  background: #333333; /* Solid matte */
+  border-radius: 4px; /* Square avatar */
+  border: 1px solid #444444;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #b3b3b3;
   font-weight: bold;
   font-size: 18px;
   text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(170, 170, 170, 0.3);
 }
 
 .user-name {
-  color: #cccccc;
+  color: #b3b3b3;
   font-size: 15px;
-  text-shadow: 0 0 3px rgba(170, 170, 170, 0.3);
 }
 
 #connected-users {
@@ -125,17 +128,24 @@ body {
   flex: 1;
   max-width: 700px;
   position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, z-index 0s;
+}
+
+.chat-container:hover {
+  transform: scale(1.02); /* Pop-out effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Stronger matte shadow */
+  z-index: 10; /* Appear above others */
 }
 
 #chat {
   max-width: 100%;
   height: 90vh;
   margin: 20px 0;
-  border-radius: 20px;
+  border-radius: 4px;
+  border: 1px solid #444444;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(40, 40, 40, 0.7));
-  backdrop-filter: blur(15px);
-  box-shadow: 0 0 30px rgba(170, 170, 170, 0.1);
+  background: #1a1a1a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
@@ -146,9 +156,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #cccccc;
+  color: #b3b3b3;
   font-size: 20px;
-  text-shadow: 0 0 5px rgba(170, 170, 170, 0.3);
   animation: pulse 1.5s infinite;
   display: none;
 }
@@ -166,35 +175,35 @@ body {
 
 #chatBox li {
   padding: 12px 18px;
-  border-radius: 20px;
+  border-radius: 4px;
   max-width: 75%;
   word-wrap: break-word;
   white-space: pre-wrap;
   display: flex;
   flex-direction: column;
   word-break: break-word;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 #chatBox li:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(170, 170, 170, 0.2);
+  transform: translateY(-2px);
+  background: #333333;
 }
 
 .sent {
-  background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
-  color: #fff;
+  background: #2a2a2a;
+  color: #b3b3b3;
   align-self: flex-end;
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 2px;
   animation: slideInRight 0.3s ease-out;
 }
 
 .received {
-  background: linear-gradient(45deg, #3a3a3a, #4a4a4a);
-  color: #fff;
+  background: #333333;
+  color: #b3b3b3;
   align-self: flex-start;
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 2px;
   animation: slideInLeft 0.3s ease-out;
 }
 
@@ -202,15 +211,14 @@ body {
   font-weight: bold;
   font-size: 0.9em;
   margin-bottom: 5px;
-  text-shadow: 0 0 3px rgba(170, 170, 170, 0.3);
 }
 
 .sent .message-username {
-  color: #cccccc;
+  color: #b3b3b3;
 }
 
 .received .message-username {
-  color: #aaaaaa;
+  color: #999999;
 }
 
 .message-content {
@@ -220,14 +228,14 @@ body {
 .image-message {
   max-width: 100%;
   max-height: 250px;
-  border-radius: 12px;
+  border-radius: 4px;
   margin-top: 8px;
   display: block;
   transition: transform 0.3s ease;
 }
 
 .image-message:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 .system-message {
@@ -243,30 +251,37 @@ body {
 .user-notification {
   display: inline-block;
   padding: 5px 15px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 12px;
+  background: #2a2a2a;
+  border-radius: 4px;
+  border: 1px solid #444444;
   font-size: 14px;
-  color: #cccccc;
-  text-shadow: 0 0 3px rgba(170, 170, 170, 0.3);
+  color: #b3b3b3;
 }
 
 /* YouTube sidebar */
 .youtube-sidebar {
   width: 300px;
-  background: linear-gradient(180deg, rgba(26, 26, 26, 0.9), rgba(40, 40, 40, 0.8));
-  backdrop-filter: blur(15px);
-  border-radius: 16px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  border: 1px solid #444444;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(170, 170, 170, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, z-index 0s;
+}
+
+.youtube-sidebar:hover {
+  transform: scale(1.02); /* Pop-out effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Stronger matte shadow */
+  z-index: 10; /* Appear above others */
 }
 
 .youtube-container {
   padding: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 16px;
+  background: #2a2a2a;
+  border-radius: 4px;
+  border: 1px solid #444444;
   margin-top: 20px;
   display: flex;
   flex-direction: column;
@@ -275,11 +290,10 @@ body {
 }
 
 .youtube-container h3 {
-  color: #cccccc;
+  color: #b3b3b3;
   margin: 0 0 15px 0;
   text-align: center;
   font-size: 20px;
-  text-shadow: 0 0 5px rgba(170, 170, 170, 0.3);
 }
 
 .youtube-input-container {
@@ -290,35 +304,35 @@ body {
 
 #youtube-link {
   padding: 14px;
-  border: 1px solid #aaaaaa;
-  border-radius: 8px;
+  border: 1px solid #444444;
+  border-radius: 2px;
   font-size: 15px;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  transition: box-shadow 0.3s ease;
+  background: #2a2a2a;
+  color: #b3b3b3;
+  transition: border-color 0.3s ease;
 }
 
 #youtube-link:focus {
-  box-shadow: 0 0 15px rgba(170, 170, 170, 0.3);
+  border-color: #666666;
   outline: none;
 }
 
 #send-youtube-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(45deg, #3a3a3a, #5a5a5a);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
+  background: #333333;
+  color: #b3b3b3;
+  border: 1px solid #444444;
+  border-radius: 2px;
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 #send-youtube-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(170, 170, 170, 0.3);
+  transform: scale(1.02);
+  background: #444444;
 }
 
 #audio-player-container {
@@ -339,30 +353,30 @@ body {
   max-width: 100%;
   height: 150px;
   object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(170, 170, 170, 0.2);
+  border-radius: 2px;
+  border: 1px solid #444444;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
 }
 
 #thumbnail-image:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 #video-title {
   font-family: 'Orbitron', sans-serif;
-  color: #cccccc;
+  color: #b3b3b3;
   font-size: 16px;
   text-align: center;
-  text-shadow: 0 0 3px rgba(170, 170, 170, 0.3);
   padding: 5px 0;
 }
 
 .custom-audio-player {
-  background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(40, 40, 40, 0.7));
-  backdrop-filter: blur(15px);
-  border-radius: 12px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  border: 1px solid #444444;
   padding: 15px;
-  box-shadow: 0 0 15px rgba(170, 170, 170, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin-top: 10px;
 }
 
@@ -374,31 +388,30 @@ body {
 }
 
 .control-btn {
-  background: rgba(0, 0, 0, 0.5);
-  border: none;
-  border-radius: 50%;
+  background: #2a2a2a;
+  border: 1px solid #444444;
+  border-radius: 2px;
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #cccccc;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #b3b3b3;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .control-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(170, 170, 170, 0.3);
+  transform: scale(1.02);
+  background: #333333;
 }
 
 .time-display {
   font-family: 'Orbitron', sans-serif;
-  color: #cccccc;
+  color: #b3b3b3;
   font-size: 14px;
   min-width: 50px;
   text-align: center;
-  text-shadow: 0 0 3px rgba(170, 170, 170, 0.3);
 }
 
 .seek-bar, .volume-bar {
@@ -407,15 +420,15 @@ body {
   width: 100%;
   max-width: 150px;
   height: 6px;
-  background: #555;
-  border-radius: 3px;
+  background: #444444;
+  border-radius: 2px;
   outline: none;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 .seek-bar:hover, .volume-bar:hover {
-  box-shadow: 0 0 10px rgba(170, 170, 170, 0.3);
+  background: #666666;
 }
 
 .seek-bar::-webkit-slider-thumb, .volume-bar::-webkit-slider-thumb {
@@ -423,19 +436,19 @@ body {
   appearance: none;
   width: 12px;
   height: 12px;
-  background: #cccccc;
-  border-radius: 50%;
+  background: #b3b3b3;
+  border-radius: 2px;
   cursor: pointer;
-  box-shadow: 0 0 5px rgba(170, 170, 170, 0.5);
+  border: 1px solid #444444;
 }
 
 .seek-bar::-moz-range-thumb, .volume-bar::-moz-range-thumb {
   width: 12px;
   height: 12px;
-  background: #cccccc;
-  border-radius: 50%;
+  background: #b3b3b3;
+  border-radius: 2px;
   cursor: pointer;
-  box-shadow: 0 0 5px rgba(170, 170, 170, 0.5);
+  border: 1px solid #444444;
 }
 
 .volume-bar {
@@ -454,7 +467,7 @@ body {
 
 .waveform div {
   width: 3px;
-  background: #aaaaaa;
+  background: #999999;
   animation: wave 1.5s infinite ease-in-out;
 }
 
@@ -476,19 +489,18 @@ body {
 .youtube-loading {
   text-align: center;
   padding: 10px;
-  color: #cccccc;
+  color: #b3b3b3;
   font-style: italic;
-  text-shadow: 0 0 3px rgba(170, 170, 170, 0.3);
 }
 
 /* Input area */
 .input-container {
   display: flex;
-  border-top: 1px solid #aaaaaa;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 0 0 20px 20px;
+  border-top: 1px solid #444444;
+  background: #1a1a1a;
+  border-radius: 0 0 4px 4px;
   padding: 10px;
-  box-shadow: 0 0 15px rgba(170, 170, 170, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .upload-btn {
@@ -496,16 +508,16 @@ body {
   align-items: center;
   justify-content: center;
   width: 60px;
-  background: rgba(0, 0, 0, 0.5);
+  background: #2a2a2a;
   cursor: pointer;
   transition: background 0.3s ease, color 0.3s ease;
-  color: #aaaaaa;
-  border-right: 1px solid #aaaaaa;
+  color: #999999;
+  border-right: 1px solid #444444;
 }
 
 .upload-btn:hover {
-  background: #aaaaaa;
-  color: #000;
+  background: #444444;
+  color: #b3b3b3;
 }
 
 #message {
@@ -513,31 +525,31 @@ body {
   padding: 14px;
   border: none;
   font-size: 16px;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  transition: box-shadow 0.3s ease;
+  background: #2a2a2a;
+  color: #b3b3b3;
+  transition: border-color 0.3s ease;
 }
 
 #message:focus {
   outline: none;
-  box-shadow: 0 0 15px rgba(170, 170, 170, 0.3);
+  border: 1px solid #666666;
 }
 
 button {
   width: 120px;
   padding: 14px;
-  background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
-  color: #fff;
-  border: none;
+  background: #333333;
+  color: #b3b3b3;
+  border: 1px solid #444444;
   cursor: pointer;
   font-size: 16px;
-  border-radius: 8px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 2px;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(170, 170, 170, 0.3);
+  transform: scale(1.02);
+  background: #444444;
 }
 
 button:active {
@@ -560,15 +572,14 @@ button:active {
 }
 
 .modal-container {
-  background: linear-gradient(135deg, rgba(44, 44, 44, 0.9), rgba(32, 32, 32, 0.8));
-  backdrop-filter: blur(12px);
+  background: #1a1a1a;
   padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  border: 1px solid #444444;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 450px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: white;
+  color: #b3b3b3;
   animation: slideInModal 0.3s ease-out;
 }
 
@@ -579,9 +590,8 @@ button:active {
 
 .modal-header h2 {
   margin: 0;
-  color: #f1f1f1;
+  color: #b3b3b3;
   font-size: 28px;
-  text-shadow: 0 0 5px rgba(0, 120, 215, 0.5);
 }
 
 .form-group {
@@ -592,26 +602,25 @@ button:active {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
-  color: #ddd;
+  color: #b3b3b3;
   font-size: 14px;
 }
 
 .form-group input {
   width: 100%;
   padding: 12px 15px;
-  border: 1px solid #555;
-  border-radius: 8px;
+  border: 1px solid #444444;
+  border-radius: 2px;
   font-size: 16px;
   box-sizing: border-box;
-  background-color: rgba(51, 51, 51, 0.8);
-  color: white;
-  transition: all 0.2s ease;
+  background: #2a2a2a;
+  color: #b3b3b3;
+  transition: border-color 0.2s ease;
 }
 
 .form-group input:focus {
-  border-color: #1e88e5;
+  border-color: #666666;
   outline: none;
-  box-shadow: 0 0 8px rgba(30, 136, 229, 0.4);
 }
 
 .error-message {
@@ -636,49 +645,48 @@ button:active {
 
 .btn {
   padding: 14px 20px;
-  border: none;
-  border-radius: 8px;
+  border: 1px solid #444444;
+  border-radius: 2px;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
   width: 100%;
   font-weight: 500;
 }
 
 .btn-primary {
-  background-color: #0078d7;
-  color: white;
+  background: #333333;
+  color: #b3b3b3;
 }
 
 .btn-secondary {
-  background-color: #555;
-  color: white;
+  background: #444444;
+  color: #b3b3b3;
 }
 
 .btn-tertiary {
-  background-color: #3a3a3a;
-  color: #ddd;
+  background: #555555;
+  color: #b3b3b3;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
 }
 
 .btn-primary:hover {
-  background-color: #0063b1;
+  background: #444444;
 }
 
 .btn-secondary:hover {
-  background-color: #666;
+  background: #555555;
 }
 
 .btn-tertiary:hover {
-  background-color: #444;
+  background: #666666;
 }
 
 .btn:active {
-  transform: translateY(0);
+  transform: scale(1);
 }
 
 .room-id-container {
@@ -688,52 +696,52 @@ button:active {
 
 .generated-room-id {
   flex: 1;
-  background-color: rgba(51, 51, 51, 0.8);
+  background: #2a2a2a;
   padding: 12px;
-  border-radius: 8px 0 0 8px;
+  border-radius: 2px 0 0 2px;
   font-family: 'JetBrains Mono', monospace;
-  color: #1e88e5;
+  color: #666666;
   font-size: 16px;
   letter-spacing: 1px;
   text-align: center;
-  border: 1px solid #555;
+  border: 1px solid #444444;
   border-right: none;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 .copy-btn {
-  background-color: rgba(51, 51, 51, 0.8);
-  border: 1px solid #555;
+  background: #2a2a2a;
+  border: 1px solid #444444;
   border-left: none;
-  border-radius: 0 8px 8px 0;
-  color: #1e88e5;
+  border-radius: 0 2px 2px 0;
+  color: #666666;
   padding: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .copy-btn:hover {
-  background-color: #444;
-  color: white;
+  background: #444444;
+  color: #b3b3b3;
 }
 
 .copy-tooltip {
   position: absolute;
-  background-color: #0078d7;
-  color: white;
+  background: #333333;
+  color: #b3b3b3;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: 2px;
   font-size: 12px;
   opacity: 0;
   top: 50%;
   left: calc(100% + 10px);
   transform: translateY(-50%);
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
   pointer-events: none;
   white-space: nowrap;
 }
@@ -744,7 +752,7 @@ button:active {
 
 /* Animations */
 @keyframes fadeInPage {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.98); }
   to { opacity: 1; transform: scale(1); }
 }
 
@@ -754,29 +762,29 @@ button:active {
 }
 
 @keyframes slideInModal {
-  from { transform: translateY(-20px); opacity: 0; }
+  from { transform: translateY(-10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes slideInRight {
-  from { transform: translateX(30px); opacity: 0; }
+  from { transform: translateX(20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes slideInLeft {
-  from { transform: translateX(-30px); opacity: 0; }
+  from { transform: translateX(-20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes pulse {
   0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.8; }
+  50% { transform: scale(1.02); opacity: 0.9; }
   100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes pulseUser {
   0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  50% { transform: scale(1.02); }
   100% { transform: scale(1); }
 }
 
@@ -787,7 +795,7 @@ button:active {
 }
 
 @keyframes fadeInPlayer {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -805,7 +813,7 @@ button:active {
   
   .sidebar {
     width: 100%;
-    border-radius: 16px;
+    border-radius: 4px;
     margin-bottom: 20px;
   }
   
@@ -815,13 +823,14 @@ button:active {
   
   .youtube-sidebar {
     width: 100%;
-    border-radius: 16px;
+    border-radius: 4px;
     margin-top: 20px;
   }
   
   #chat {
     height: 70vh;
     margin: 0;
+    border-radius: 4px;
   }
   
   .player-controls {
@@ -835,6 +844,12 @@ button:active {
   
   .time-display {
     font-size: 12px;
+  }
+  
+  .sidebar:hover, .chat-container:hover, .youtube-sidebar:hover {
+    transform: scale(1.02); /* Maintain pop-out effect on mobile */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10;
   }
   
   #thumbnail-image {

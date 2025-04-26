@@ -384,7 +384,7 @@ window.onload = function () {
     userInfo.user_name = userName;
     loginModal.style.display = 'none';
     document.getElementById("app-title").classList.add('visible');
-    document.getElementById("chat-name").innerHTML = `<h1>Room: ${userInfo.room}</h1>`;
+    document.getElementById("chat-name").innerHTML = `<h1>Room ID: ${userInfo.room}</h1>`;
     document.getElementById("chat-name").style.display = 'block';
     console.log("User created and joined room:", userInfo.room);
     console.log("user_name:", userInfo.user_name);

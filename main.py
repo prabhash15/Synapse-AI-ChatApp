@@ -56,7 +56,7 @@ async def get_answer(question):
 
 
 async def broadcast_total_users_in_room(room_number, user_name=None, remove_user=None):
-    # Get list of all usernames in the room
+    # get list of all usernames in the room
     users_in_room = [ws_username[conn] for conn in rooms[room_number] if conn in ws_username]
     
     if user_name and not remove_user:
