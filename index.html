@@ -61,8 +61,21 @@
       </form>
     </div>
   </div>
+  
   <div id="chat">
     <ul id="chatBox"></ul>
+    
+    <!-- YouTube link input form -->
+    <div class="youtube-container">
+      <div class="youtube-input-container">
+        <input id="youtube-link" placeholder="Paste YouTube link here..." />
+        <button id="send-youtube-btn">Get Audio</button>
+      </div>
+      <div id="audio-player-container" style="display: none;">
+        <audio id="audio-player" controls></audio>
+      </div>
+    </div>
+    
     <div class="input-container">
       <label for="image-upload" class="upload-btn" title="Upload Image">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>

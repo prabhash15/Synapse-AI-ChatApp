@@ -4,6 +4,16 @@ let userInfo = {
   room: ""
 };
 
+function base64ToBinary(base64) {
+  var binary_string = window.atob(base64);
+  var len = binary_string.length;
+  var bytes = new Uint8Array(len);
+  for (var i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
 function replyimage(message, reply_image) {
   const arrayBuffer = new Uint8Array(message.data).buffer;
   const blob = new Blob([arrayBuffer], { type: message.fileType });
@@ -50,6 +60,10 @@ function socketConnect() {
       // Handle room creation response
       document.getElementById("generatedRoomId").innerText = data.room_id;
     }
+    if (data.type === "audio") {
+      // Handle received audio
+      handleReceivedAudio(data);
+    }
   };
 
   socket.onclose = function () {
@@ -57,7 +71,82 @@ function socketConnect() {
   };
 }
 
+// Handle received audio from server
+function handleReceivedAudio(data) {
+  // Hide loading indicator if it exists
+  const loadingIndicator = document.querySelector('.youtube-loading');
+  if (loadingIndicator) {
+    loadingIndicator.remove();
+  }
+  //convert the BASE64 data to BINARY
 
+  binary_data  = base64ToBinary(data.audio_data);
+
+  // Convert the binary data to a Blob
+  const arrayBuffer = new Uint8Array(binary_data).buffer;
+  const blob = new Blob([arrayBuffer], { type: 'audio/mp3' }); // Assuming the server converts to MP3
+  const audioUrl = URL.createObjectURL(blob);
+
+  // Set the audio player's source and show it
+  const audioPlayer = document.getElementById('audio-player');
+  audioPlayer.src = audioUrl;
+  
+  // Show the audio player container
+  const audioPlayerContainer = document.getElementById('audio-player-container');
+  audioPlayerContainer.style.display = 'block';
+  
+  // Add a message to the chat
+  const chatBox = document.getElementById("chatBox");
+  const messageElement = document.createElement("li");
+  messageElement.classList.add("received");
+  messageElement.innerHTML = `<span style="color:black;"><i><strong>System</strong></i></span>: Audio extracted from YouTube link: ${data.youtube_url}`;
+  chatBox.appendChild(messageElement);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Send YouTube link to server
+function sendYoutubeLink() {
+  const youtubeLink = document.getElementById('youtube-link').value.trim();
+  
+  if (!youtubeLink) {
+    alert('Please enter a valid YouTube link');
+    return;
+  }
+  
+  // Check if it's a valid YouTube URL (basic check)
+  if (!youtubeLink.includes('youtube.com/') && !youtubeLink.includes('youtu.be/')) {
+    alert('Please enter a valid YouTube URL');
+    return;
+  }
+  
+  // Show loading indicator
+  const youtubeContainer = document.querySelector('.youtube-container');
+  const loadingIndicator = document.createElement('div');
+  loadingIndicator.className = 'youtube-loading';
+  loadingIndicator.textContent = 'Extracting audio from YouTube video...';
+  youtubeContainer.appendChild(loadingIndicator);
+  
+  // Send the YouTube link to the server
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+      type: "youtube_link",
+      url: youtubeLink,
+      user_name: userInfo.user_name,
+      room: userInfo.room
+    }));
+    
+    // Clear the input
+    document.getElementById('youtube-link').value = '';
+    
+    // Add message to chat
+    const chatBox = document.getElementById("chatBox");
+    const messageElement = document.createElement("li");
+    messageElement.classList.add("sent");
+    messageElement.innerHTML = `<span style="color:black;"><i><strong>YOU</strong></i></span>: Requested audio extraction from: ${youtubeLink}`;
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
 
 // Request a room ID from server
 function requestRoomId() {
@@ -68,7 +157,7 @@ function requestRoomId() {
   }
 }
 
-// When page loads Starting point
+// When page loads - Starting point
 window.onload = function () {
   const loginModal = document.getElementById('loginModal');
   loginModal.style.display = 'flex';
@@ -88,7 +177,6 @@ window.onload = function () {
     
     // Request room ID from server
     requestRoomId();
-    
   });
 
   document.getElementById('joinRoomBtn').addEventListener('click', function() {
@@ -104,6 +192,19 @@ window.onload = function () {
   document.getElementById('backFromJoin').addEventListener('click', function() {
     joinRoomForm.style.display = 'none';
     optionSelection.style.display = 'block';
+  });
+
+  // YouTube link event listener
+  document.getElementById('send-youtube-btn').addEventListener('click', function() {
+    sendYoutubeLink();
+  });
+  
+  // Add "Enter key" listener to YouTube input
+  document.getElementById('youtube-link').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendYoutubeLink();
+    }
   });
 
   // Create Room Form submission
@@ -245,7 +346,6 @@ window.onload = function () {
           user_name: userInfo.user_name,
         };
         socket.send(JSON.stringify(message));
-
       }
     };
 

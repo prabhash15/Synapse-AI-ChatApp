@@ -4,6 +4,9 @@ import asyncio
 from google import genai
 from config import API_KEY
 from URoomNumber import generate_unique_room_id
+from music import download
+
+import base64
 
 client = genai.Client(api_key = API_KEY)
 
@@ -66,6 +69,7 @@ async def chat_endpoint(websocket: WebSocket):
     user_name = None
     
     create_or_join = await websocket.receive_json()
+                
     
     
     if create_or_join["type"] == "create_room":
@@ -151,7 +155,7 @@ async def chat_endpoint(websocket: WebSocket):
                             "user_name": user_name
                             })
 
-            elif (message["type"] == "text" and "@ai" in message["message"]):
+            if (message["type"] == "text" and "@ai" in message["message"]):
                 AI_response = await get_answer(message["message"] + query)
                 
                 #cleaning the response
@@ -174,6 +178,17 @@ async def chat_endpoint(websocket: WebSocket):
                                               "user_name":"AI",
                                               "message":f"{AI_response}"
                                               })
+            
+            
+            if message["type"] == "youtube_link":
+                
+                audio = await download(message["url"])
+                base64_data = base64.b64encode(audio["data"]).decode("utf-8")
+                for conn in rooms[room_id]:
+                    await conn.send_json({"type":"audio","audio_data":base64_data})
+                    
+                
+                        
             else:
                 if websocket in rooms[room_id]:
                     for conn in rooms[room_id]:

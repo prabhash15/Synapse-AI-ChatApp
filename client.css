@@ -42,7 +42,7 @@ body {
 
 /* Chat messages */
 #chatBox {
-  height: 85%; /* Make chat box take up most of the container's height */
+  height: 70%; /* Reduced to make room for YouTube controls */
   overflow-y: auto;
   padding: 15px;
   list-style-type: none;
@@ -81,7 +81,57 @@ body {
   border-bottom-left-radius: 4px; /* Chat bubble effect */
 }
 
-/* Message input container */
+/* YouTube container styles */
+.youtube-container {
+  border-top: 1px solid #444;
+  padding: 15px;
+  background-color: #333;
+}
+
+.youtube-input-container {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+#youtube-link {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #444;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+  background-color: #3a3a3a;
+  color: white;
+}
+
+#send-youtube-btn {
+  width: auto;
+  padding: 12px 15px;
+  background-color: #cc0000; /* YouTube red */
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#send-youtube-btn:hover {
+  background-color: #ff0000;
+}
+
+#audio-player-container {
+  width: 100%;
+  padding: 10px 0;
+}
+
+#audio-player {
+  width: 100%;
+  height: 40px;
+  border-radius: 4px;
+  background-color: #444;
+}
+
+/* Input area */
 .input-container {
   display: flex;
   border-top: 1px solid #444;
@@ -301,4 +351,12 @@ button:active {
   letter-spacing: 1px;
   text-align: center;
   border: 1px dashed #444;
+}
+
+/* Loading indicator for YouTube processing */
+.youtube-loading {
+  text-align: center;
+  padding: 10px;
+  color: #aaa;
+  font-style: italic;
 }
