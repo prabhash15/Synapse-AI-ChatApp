@@ -4,6 +4,7 @@ let userInfo = {
   room: ""
 };
 
+
 function base64ToBinary(base64) {
   var binary_string = window.atob(base64);
   var len = binary_string.length;
@@ -35,6 +36,8 @@ function replyimage(message, reply_image) {
   reply_image.appendChild(link);
 }
 
+
+
 function socketConnect() {
   socket = new WebSocket("ws://localhost:8000/ws/chat");
 
@@ -57,6 +60,7 @@ function socketConnect() {
       chatBox.appendChild(joinMessage);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
+
     if (data.type === "left") {
       // Add system message to chat for user leaving
       const chatBox = document.getElementById("chatBox");
@@ -66,6 +70,7 @@ function socketConnect() {
       chatBox.appendChild(leaveMessage);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
+
     if (data.type === "image" || data.type === "message") {
       reply(event.data);
     }
@@ -387,7 +392,6 @@ function sendMessage() {
 
   if (message === "") return;
 
-  // Send as a text message
   const textMessage = {
     type: "text",
     message: message
@@ -398,7 +402,18 @@ function sendMessage() {
   const chatBox = document.getElementById("chatBox");
   const messageElement = document.createElement("li");
   messageElement.classList.add("sent");
-  messageElement.innerHTML = `<span style="color:black;"><i><strong>YOU</strong></i></span> : ${message}`;
+  
+  // Create username element
+  const usernameSpan = document.createElement("span");
+  usernameSpan.className = "message-username";
+  usernameSpan.textContent = "YOU";
+  messageElement.appendChild(usernameSpan);
+  
+  // Create message content
+  const contentDiv = document.createElement("div");
+  contentDiv.className = "message-content";
+  contentDiv.textContent = message;
+  messageElement.appendChild(contentDiv);
   
   // Add with animation
   chatBox.appendChild(messageElement);
@@ -414,24 +429,56 @@ function sendMessage() {
 }
 
 
-// Enhanced reply function with better animation flow
+
 function reply(message) {
   message = JSON.parse(message);
   const chatBox = document.getElementById("chatBox");
   const reply_value = document.createElement("li");
   reply_value.classList.add("received");
 
+  // Create username element
+  const usernameSpan = document.createElement("span");
+  usernameSpan.className = "message-username";
+  usernameSpan.textContent = message["user_name"];
+  reply_value.appendChild(usernameSpan);
+
+  // Create message content container
+  const contentDiv = document.createElement("div");
+  contentDiv.className = "message-content";
+
+  if (message.AIresponse) {
+    contentDiv.innerHTML = message.message;
+  }
+
   if (message.type === "image") {
-    // handle image
-    replyimage(message, reply_value);
-  }
+    // Handle image message
+    const arrayBuffer = new Uint8Array(message.data).buffer;
+    const blob = new Blob([arrayBuffer], { type: message.fileType });
+    const imageUrl = URL.createObjectURL(blob);
 
-  if (message.type === "message") {
+    // Create an anchor element that wraps the image
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.className = 'image-message';
+
+    link.appendChild(img); // wrap image in the link
+    contentDiv.appendChild(link);
+  }
+  
+  else if (message.type === "message" && !(message.AIresponse)) {
     // Handle regular text message
-    reply_value.innerHTML = `<span style="color:black;"><i><strong>${message["user_name"]}</strong></i></span> : ${message["message"]}`;
+    contentDiv.textContent = message["message"];
   }
 
-  // Add with animation
+  // Add the content to the message element
+  reply_value.appendChild(contentDiv);
+
+  
   chatBox.appendChild(reply_value);
   
   // Ensure smooth scroll to bottom

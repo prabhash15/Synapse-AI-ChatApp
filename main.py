@@ -83,7 +83,9 @@ async def chat_endpoint(websocket: WebSocket):
         #send the room id to the client
         await websocket.send_json(
             {"type": "room_created", 
-             "room_id": room_id}
+             "room_id": room_id,
+             "AIresponse":False
+             }
             )
 
     if create_or_join["type"] == "join":
@@ -152,7 +154,8 @@ async def chat_endpoint(websocket: WebSocket):
                             "data": list(img_data),
                             "fileType": file_type,
                             "filename": filename,
-                            "user_name": user_name
+                            "user_name": user_name,
+                            "AIresponse":False
                             })
 
             if (message["type"] == "text" and "@ai" in message["message"]):
@@ -165,18 +168,21 @@ async def chat_endpoint(websocket: WebSocket):
                 await asyncio.to_thread(print,f"AI response: {AI_response}")
                 if websocket in rooms[room_id]:
                     for conn in rooms[room_id]:
+                        
                         if conn != websocket:
-                            
+                            text = message["message"]
                             await conn.send_json(
                                 {"type":"message",
                                  "user_name":f"{user_name}",
-                                 "message":f"{message["message"]}"
+                                 "message":f"{text}",
+                                 "AIresponse":False,
                                  })
                             
                         await conn.send_json(
                                              {"type":"message",
                                               "user_name":"AI",
-                                              "message":f"{AI_response}"
+                                              "message":f"{AI_response}",
+                                              "AIresponse":True,
                                               })
             
             
@@ -197,7 +203,8 @@ async def chat_endpoint(websocket: WebSocket):
                             await conn.send_json(
                                 {"type":"message",
                                  "user_name":f"{user_name}",
-                                 "message":f"{message["message"]}"
+                                 "message":f"{message["message"]}",
+                                 "AIresponse":False,   
                                  })
 
 

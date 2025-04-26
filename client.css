@@ -1,14 +1,11 @@
 /* General styles */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #121212; /* Dark background for the page */
-  color: white; /* White text color for readability */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* dark bluish gradient */
+
 }
 
 #connected-users {
-  display: none; /* Hide this element as we're using system messages in chat instead */
+  display: none; 
 }
 
 #number-of-users {
@@ -39,14 +36,15 @@ body {
 
 /* Chat container */
 #chat {
-  max-width: 600px; /* Make it narrower */
-  height: 90vh; /* Make it taller */
+  max-width: 600px;
+  height: 90vh;
   margin: 0 auto;
-  border: 1px solid #444; /* Dark border to fit the theme */
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   overflow: hidden;
-  background-color: #2c2c2c; /* Darker background for chat container */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  background: rgba(44, 44, 44, 0.6); /* Semi-transparent */
+  backdrop-filter: blur(10px); /* Glassmorphism effect */
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   display: flex;
   flex-direction: column;
 }
@@ -252,14 +250,17 @@ button:active {
 }
 
 .modal-container {
-  background-color: #2c2c2c;
+  background: rgba(44, 44, 44, 0.6); /* Semi-transparent glassy look */
+  backdrop-filter: blur(12px);
   padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   width: 100%;
   max-width: 400px;
-  border: 1px solid #444;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
 }
+
 
 .modal-header {
   margin-bottom: 20px;
@@ -269,6 +270,7 @@ button:active {
 .modal-header h2 {
   margin: 0;
   color: #f1f1f1;
+  text-shadow: 0 0 3px #0078d7, 0 0 6px #0078d7, 0 0 10px #0078d7;
 }
 
 .form-group {
@@ -491,4 +493,62 @@ button:hover {
 
 button:active {
   transform: translateY(0);
+}
+
+/* Messages - improved styling */
+#chatBox li {
+  animation: fadeIn 0.3s ease-out;
+  padding: 8px 12px; /* Reduced padding */
+  border-radius: 16px;
+  max-width: 70%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  display: flex; /* Change to flex */
+  flex-direction: column; /* Stack username and content */
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  margin: 3px 0;
+  transition: all 0.2s ease;
+}
+
+/* Username styling */
+.message-username {
+  font-weight: bold;
+  font-style: italic;
+  font-size: 0.85em;
+  margin-bottom: 3px; /* Small space between username and message */
+  opacity: 0.8;
+}
+
+.sent .message-username {
+  color: #dbeeff; /* Light blue for your own messages */
+}
+
+.received .message-username {
+  color: #dfdfdf; /* Light gray for received messages */
+}
+
+/* Message content container */
+.message-content {
+  width: 100%;
+}
+
+/* Image message specific styling */
+.image-message {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  margin-top: 5px; /* Reduced space before image */
+  display: block;
+}
+
+/* System messages */
+.system-message {
+  text-align: center;
+  max-width: 100% !important;
+  background: transparent !important;
+  padding: 5px 0 !important;
+  margin: 5px 0 !important;
+  box-shadow: none !important;
+  display: block; /* Override flex display */
 }
