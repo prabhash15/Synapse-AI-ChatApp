@@ -47,17 +47,32 @@ async def get_answer(question):
     return response.text
 
 
-async def broadcast_total_users_in_room(room_number , user_name = None , remove_user = None):
+async def broadcast_total_users_in_room(room_number, user_name=None, remove_user=None):
+    # Get list of all usernames in the room
+    users_in_room = [ws_username[conn] for conn in rooms[room_number] if conn in ws_username]
+    
     if user_name and not remove_user:
         for conn in rooms[room_number]:
-            await conn.send_json({"type":"joined","user_name":user_name})
+            await conn.send_json({
+                "type": "joined",
+                "user_name": user_name,
+                "users": users_in_room
+            })
             
-    elif remove_user and remove_user:
+    elif remove_user and user_name:
         for conn in rooms[room_number]:
-            await conn.send_json({"type":"left","user_name":user_name})
+            await conn.send_json({
+                "type": "left",
+                "user_name": user_name,
+                "users": users_in_room
+            })
         
     for conn in rooms[room_number]:
-        await conn.send_json({"type":"total_users","number":len(rooms[room_number])})
+        await conn.send_json({
+            "type": "total_users",
+            "number": len(rooms[room_number]),
+            "users": users_in_room
+        })
 
 
 @app.websocket("/ws/chat")
@@ -186,20 +201,19 @@ async def chat_endpoint(websocket: WebSocket):
                                               })
             
             
-            if message["type"] == "youtube_link":
+            elif (message["type"] == "youtube_link"):
                 
                 audio = await download(message["url"])
                 base64_data = base64.b64encode(audio["data"]).decode("utf-8")
-                for conn in rooms[room_id]:
-                    await conn.send_json({"type":"audio","audio_data":base64_data})
+                await websocket.send_json({"type":"audio","audio_data":base64_data})
                     
                 
                         
             else:
                 if websocket in rooms[room_id]:
                     for conn in rooms[room_id]:
+                        
                         if conn != websocket:
-                            
                             await conn.send_json(
                                 {"type":"message",
                                  "user_name":f"{user_name}",

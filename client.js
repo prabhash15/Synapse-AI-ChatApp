@@ -49,7 +49,20 @@ function socketConnect() {
     const data = JSON.parse(event.data);
     if (data.type === "total_users") {
       document.getElementById("number-of-users").innerHTML = `Users in room: ${data.number}`;
-      document.getElementById("number-of-users").style.display = 'inline-block';
+      document.getElementById("number-of-users").style.display = 'block'; // Always show this
+      
+      // Update connected users display
+      const connectedUsers = document.getElementById("connected-users");
+      if (data.users) {
+        connectedUsers.innerHTML = data.users.map(user => `
+          <div class="user-item" id="user-${user.replace(/\s+/g, '-')}">
+            <div class="user-avatar">${user.charAt(0).toUpperCase()}</div>
+            <div class="user-name">${user}</div>
+          </div>
+        `).join('');
+        connectedUsers.style.display = 'flex';
+        connectedUsers.classList.add('visible');
+      }
     }
     if (data.type === "joined") {
       // Add system message to chat for user joining
@@ -89,40 +102,31 @@ function socketConnect() {
   };
 }
 
-// Handle received audio from server
 function handleReceivedAudio(data) {
   // Hide loading indicator if it exists
   const loadingIndicator = document.querySelector('.youtube-loading');
   if (loadingIndicator) {
     loadingIndicator.remove();
   }
-  //convert the BASE64 data to BINARY
-
-  binary_data  = base64ToBinary(data.audio_data);
+  
+  // Convert the BASE64 data to BINARY
+  binary_data = base64ToBinary(data.audio_data);
 
   // Convert the binary data to a Blob
   const arrayBuffer = new Uint8Array(binary_data).buffer;
   const blob = new Blob([arrayBuffer], { type: 'audio/mp3' }); // Assuming the server converts to MP3
   const audioUrl = URL.createObjectURL(blob);
 
-  // Set the audio player's source and show it
+  // Set the audio player's source
   const audioPlayer = document.getElementById('audio-player');
   audioPlayer.src = audioUrl;
   
   // Show the audio player container
   const audioPlayerContainer = document.getElementById('audio-player-container');
   audioPlayerContainer.style.display = 'block';
-  
-  // Add a message to the chat
-  const chatBox = document.getElementById("chatBox");
-  const messageElement = document.createElement("li");
-  messageElement.classList.add("received");
-  messageElement.innerHTML = `<span style="color:black;"><i><strong>System</strong></i></span>: Audio extracted from YouTube link: ${data.youtube_url}`;
-  chatBox.appendChild(messageElement);
-  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Send YouTube link to server
+
 function sendYoutubeLink() {
   const youtubeLink = document.getElementById('youtube-link').value.trim();
   
@@ -152,17 +156,6 @@ function sendYoutubeLink() {
       user_name: userInfo.user_name,
       room: userInfo.room
     }));
-    
-    // Clear the input
-    document.getElementById('youtube-link').value = '';
-    
-    // Add message to chat
-    const chatBox = document.getElementById("chatBox");
-    const messageElement = document.createElement("li");
-    messageElement.classList.add("sent");
-    messageElement.innerHTML = `<span style="color:black;"><i><strong>YOU</strong></i></span>: Requested audio extraction from: ${youtubeLink}`;
-    chatBox.appendChild(messageElement);
-    chatBox.scrollTop = chatBox.scrollHeight;
   }
 }
 
@@ -446,9 +439,7 @@ function reply(message) {
   const contentDiv = document.createElement("div");
   contentDiv.className = "message-content";
 
-  if (message.AIresponse) {
-    contentDiv.innerHTML = message.message;
-  }
+  
 
   if (message.type === "image") {
     // Handle image message
@@ -469,7 +460,9 @@ function reply(message) {
     link.appendChild(img); // wrap image in the link
     contentDiv.appendChild(link);
   }
-  
+  else if (message.AIresponse) {
+    contentDiv.innerHTML = message.message;
+  }
   else if (message.type === "message" && !(message.AIresponse)) {
     // Handle regular text message
     contentDiv.textContent = message["message"];

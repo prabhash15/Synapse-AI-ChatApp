@@ -1,7 +1,79 @@
 /* General styles */
 body {
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* dark bluish gradient */
+  background: linear-gradient(135deg, #1a1c20, #2d3436, #636e72);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
+.main-container {
+  display: flex;
+  height: 100vh;
+  padding: 20px;
+  gap: 20px; /* Added gap between containers */
+  justify-content: center; /* Center the layout */
+  max-width: 1400px; /* Increased max width to accommodate new sidebar */
+  margin: 0 auto; /* Center the container horizontally */
+}
+
+.sidebar {
+  width: 220px;
+  background: rgba(32, 32, 32, 0.8);
+  backdrop-filter: blur(20px);
+  border-radius: 24px 0 0 24px; /* Rounded corners only on left side */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-container {
+  flex: 1;
+  max-width: 650px; /* Limit width to leave space on right */
+}
+
+/* New YouTube sidebar styles */
+.youtube-sidebar {
+  width: 280px;
+  background: rgba(32, 32, 32, 0.8);
+  backdrop-filter: blur(20px);
+  border-radius: 0 24px 24px 0; /* Rounded corners only on right side */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.users-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #0078d7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.user-name {
+  color: white;
+  font-size: 14px;
 }
 
 #connected-users {
@@ -16,9 +88,10 @@ body {
   padding: 5px 10px;
   background-color: #2c2c2c;
   border-radius: 15px;
-  display: none; /* Initially hidden, shown when users are present */
-  margin-left: 50%;
-  transform: translateX(-50%);
+  display: block; /* Always visible */
+  width: auto;
+  margin-left: 0;
+  transform: none;
 }
 
 #chat-name {
@@ -36,22 +109,23 @@ body {
 
 /* Chat container */
 #chat {
-  max-width: 600px;
+  max-width: 100%;
   height: 90vh;
-  margin: 0 auto;
+  margin: 20px 0; /* Center the chat container */
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border-radius: 24px; /* Fully rounded corners */
   overflow: hidden;
-  background: rgba(44, 44, 44, 0.6); /* Semi-transparent */
-  backdrop-filter: blur(10px); /* Glassmorphism effect */
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  background: rgba(32, 32, 32, 0.8);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
 }
 
 /* Chat messages */
 #chatBox {
-  height: 70%; /* Reduced to make room for YouTube controls */
+  height: calc(100% - 70px); /* Adjust for input container height */
   overflow-y: auto;
   padding: 15px;
   list-style-type: none;
@@ -63,15 +137,21 @@ body {
 
 /* Messages */
 #chatBox li {
-  padding: 10px 14px;
-  border-radius: 16px;
+  padding: 12px 16px;
+  border-radius: 18px;
   max-width: 70%;
   word-wrap: break-word;
-  white-space: pre-wrap; /* Ensure new lines and spaces in the message are respected */
-  display: inline-block; /* Ensures the bubble takes the size of the content */
-  word-break: break-word; /* Break long words if needed */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  margin: 3px 0;
+  white-space: pre-wrap;
+  display: inline-block;
+  word-break: break-word;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin: 4px 0;
+  transition: transform 0.2s ease;
+}
+
+#chatBox li:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* System messages for user join/leave notifications */
@@ -109,35 +189,46 @@ body {
   border-bottom-left-radius: 4px; /* Chat bubble effect */
 }
 
-/* YouTube container styles */
+/* YouTube container styles - Modified for sidebar */
 .youtube-container {
-  border-top: 1px solid #444;
   padding: 15px;
-  background-color: #333;
+  background-color: rgba(51, 51, 51, 0.7);
+  border-radius: 16px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.youtube-container h3 {
+  color: #f1f1f1;
+  margin: 0 0 10px 0;
+  text-align: center;
+  font-size: 18px;
 }
 
 .youtube-input-container {
   display: flex;
-  margin-bottom: 10px;
+  flex-direction: column;
+  gap: 10px;
 }
 
 #youtube-link {
-  flex: 1;
   padding: 12px;
   border: 1px solid #444;
-  border-radius: 4px 0 0 4px;
+  border-radius: 4px;
   font-size: 14px;
   background-color: #3a3a3a;
   color: white;
 }
 
 #send-youtube-btn {
-  width: auto;
+  width: 100%;
   padding: 12px 15px;
   background-color: #cc0000; /* YouTube red */
   color: white;
   border: none;
-  border-radius: 0 4px 4px 0;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
@@ -150,6 +241,7 @@ body {
 #audio-player-container {
   width: 100%;
   padding: 10px 0;
+  display: none; /* Initially hidden */
 }
 
 #audio-player {
@@ -164,6 +256,7 @@ body {
   display: flex;
   border-top: 1px solid #444;
   background-color: #2c2c2c;
+  border-radius: 0 0 24px 24px; /* Round bottom corners */
 }
 
 /* Image upload button */
@@ -260,7 +353,6 @@ button:active {
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
 }
-
 
 .modal-header {
   margin-bottom: 20px;
@@ -467,9 +559,6 @@ button:active {
 
 /* Improve YouTube container */
 .youtube-container {
-  border-top: 1px solid #444;
-  padding: 15px;
-  background-color: #333;
   transition: all 0.3s ease;
 }
 
@@ -552,3 +641,33 @@ button:active {
   box-shadow: none !important;
   display: block; /* Override flex display */
 }
+
+/* Responsive styles for smaller screens */
+@media (max-width: 1200px) {
+  .main-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    margin-bottom: 20px;
+  }
+  
+  .chat-container {
+    max-width: 100%;
+  }
+  
+  .youtube-sidebar {
+    width: 100%;
+    border-radius: 0 0 24px 24px;
+    margin-top: 20px;
+  }
+  
+  #chat {
+    height: 70vh;
+    margin: 0;
+  }
+}
+
