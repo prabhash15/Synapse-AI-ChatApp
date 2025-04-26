@@ -19,7 +19,12 @@ query = """Format the following content using ONLY the specified HTML tags and f
 5. Where necessary, apply bold + italics + underline formatting to emphasize key text (using: bold + italics + underline at the same time).
 6. Do not include any text outside the formatted HTML output. Just return the converted HTML code only.
 
-Here is the content to format:
+Here is the content to answer: ------------------- 
+
+
+
+
+
 """
 
 app = FastAPI()
@@ -205,19 +210,21 @@ async def chat_endpoint(websocket: WebSocket):
                 
                 audio = await download(message["url"])
                 base64_data = base64.b64encode(audio["data"]).decode("utf-8")
+                await asyncio.to_thread(print,f"Audio data length: {len(base64_data)}")
                 await websocket.send_json({"type":"audio","audio_data":base64_data})
+                await asyncio.to_thread(print,f"Audio data sent")
                     
                 
                         
-            else:
+            elif (message["type"] == "text"):
                 if websocket in rooms[room_id]:
                     for conn in rooms[room_id]:
-                        
+                        text = message["message"]
                         if conn != websocket:
                             await conn.send_json(
                                 {"type":"message",
                                  "user_name":f"{user_name}",
-                                 "message":f"{message["message"]}",
+                                 "message":f"{text}",
                                  "AIresponse":False,   
                                  })
 

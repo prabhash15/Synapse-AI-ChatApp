@@ -4,37 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Synapse</title>
-  <!-- Correct way to link an external CSS file -->
   <link rel="stylesheet" href="client.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class="app-title" id="app-title">SYNAPSE</div>
   <div class="main-container">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div id="chat-name"></div>
       <div id="number-of-users"></div>
       <div id="connected-users" class="users-list"></div>
     </div>
     <div class="chat-container">
-      <!-- Login Modal HTML -->
       <div id="loginModal" class="modal-overlay">
         <div class="modal-container">
           <div class="modal-header">
             <h2>Welcome to Synapse</h2>
+            <p style="color: #aaa; font-size: 14px; margin: 5px 0 0;">Create or join a room to start chatting</p>
           </div>
           
-          <!-- Option Selection -->
           <div id="optionSelection">
-            <div class="button-group" style="display: flex; gap: 10px;">
-              <button type="button" id="createRoomBtn" class="btn btn-primary">Create Room</button>
-              <button type="button" id="joinRoomBtn" class="btn btn-secondary">Join Room</button>
+            <div class="button-group">
+              <button type="button" id="createRoomBtn" class="btn btn-primary">Create New Room</button>
+              <button type="button" id="joinRoomBtn" class="btn btn-secondary">Join Existing Room</button>
             </div>
           </div>
           
-          <!-- Create Room Form -->
           <form id="createRoomForm" style="display: none;">
             <div class="form-group">
               <label for="createUserName">Your Name</label>
-              <input type="text" id="createUserName" placeholder="Enter Your Name" required>
+              <input type="text" id="createUserName" placeholder="Enter your name" required>
               <div id="createUserNameError" class="error-message">User name is required</div>
             </div>
             <div class="form-group">
@@ -51,21 +50,20 @@
               </div>
             </div>
             <div class="button-group">
-              <button type="submit" class="btn btn-primary">Create & Join</button>
+              <button type="submit" class="btn btn-primary">Join Room</button>
               <button type="button" id="backFromCreate" class="btn btn-tertiary">Back</button>
             </div>
           </form>
           
-          <!-- Join Room Form -->
           <form id="joinRoomForm" style="display: none;">
             <div class="form-group">
               <label for="roomId">Room ID</label>
-              <input type="text" id="roomId" placeholder="Enter Room ID" required>
+              <input type="text" id="roomId" placeholder="Enter room ID" required>
               <div id="roomIdError" class="error-message">Room ID is required</div>
             </div>
             <div class="form-group">
               <label for="userName">Your Name</label>
-              <input type="text" id="userName" placeholder="Enter Your Name" required>
+              <input type="text" id="userName" placeholder="Enter your name" required>
               <div id="userNameError" class="error-message">User name is required</div>
             </div>
             <div class="button-group">
@@ -77,6 +75,7 @@
       </div>
       
       <div id="chat">
+        <div class="chat-loading" id="chat-loading">Joining Room...</div>
         <ul id="chatBox"></ul>
         
         <div class="input-container">
@@ -90,7 +89,6 @@
       </div>
     </div>
 
-    <!-- YouTube container moved to right side -->
     <div class="youtube-sidebar">
       <div class="youtube-container">
         <h3>YouTube Audio</h3>
@@ -100,11 +98,13 @@
         </div>
         <div id="audio-player-container">
           <audio id="audio-player" controls></audio>
+          <div class="waveform" id="waveform"></div>
         </div>
       </div>
     </div>
   </div>
  
   <script src="client.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9367c7c2dcb6b039',t:'MTc0NTY4ODMzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
