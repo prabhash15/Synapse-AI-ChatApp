@@ -4,4 +4,4 @@ Its a chat application that creates/joins room created by the users
 
 With AI integration 
 
-Created mainly for Hackathons
+Created mainly for Hackathon
